@@ -1,6 +1,11 @@
-from django.http import HttpResponse
+
 from django.shortcuts import render
 
 
+from bboard.models import Bb
+
+
 def index(request):
-    return HttpResponse("<h1>Здесь будет выведен список объявлений.</h1>")
+    bbs = Bb.objects.order_by('-published')
+
+    return render(request, 'bboard/index.html', {'bbs': bbs})
