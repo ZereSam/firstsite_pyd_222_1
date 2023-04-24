@@ -1,7 +1,29 @@
 from django.db import models
 
 
+class Rubric(models.Model):
+    name = models.CharField(
+        max_length=20,
+        db_index=True,
+        verbose_name="Название",)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Рубрика'
+        verbose_name_plural = 'Рубрики'
+        ordering = ['name']
+
+
 class Bb(models.Model):
+    rubric = models.ForeignKey(
+        'Rubric',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='Рубрика',
+    )
+
     title = models.CharField(
         max_length=50,
         verbose_name='Товар'
@@ -26,7 +48,7 @@ class Bb(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return f"Объявление: {self.title}"
 
     class Meta:
         verbose_name = "Объявление"

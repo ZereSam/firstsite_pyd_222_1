@@ -17,8 +17,9 @@ Including another URLconf
 
 from django.urls import path
 
-from bboard.views import index
+from bboard.views import index, by_rubric
 
 urlpatterns = [
-    path('', index),
+    path('', index, name='index'),
+    path('<int:rubric_id>/', by_rubric, name='by_rubric'),
 ]
