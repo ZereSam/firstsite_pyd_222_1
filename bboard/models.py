@@ -1,5 +1,30 @@
 from django.contrib.auth.models import User
+from django.core import validators
+from django.core.exceptions import ValidationError
 from django.db import models
+
+
+def get_min_length():
+    min_length = 3
+    return min_length
+
+
+def validate_even(val):
+    if val % 2 != 0:
+        raise ValidationError('Число %(value)s нечетное', code='odd', params={'value': val})
+
+
+class MinMaxValueValidator:
+    def __init__(self, min_value, max_value):
+        self.min_value = min_value
+        self.max_value = max_value
+
+    def __call__(self, val):
+        if val < self.min_value or val > self.max_value:
+            raise ValidationError('Введенное число должно быть > %(min)s' 'и < %(max)s',
+                                  code='out_of_range',
+                                  params={'min': self.min_value,
+                                          'max': self.max_value})
 
 
 class AdvUser(models.Model):
@@ -9,7 +34,7 @@ class AdvUser(models.Model):
 
     user = models.OneToOneField(
         User,
-        on_delete=True,
+        on_delete=models.CASCADE,
     )
 
 
@@ -44,9 +69,6 @@ class Rubric(models.Model):
             super().delete(*args, **kwargs)
         # Выполняем какие-то действия после
 
-
-
-
     def get_absolute_url(self):
         #return "/bboard/%s/" % self.pk
         #return f"/bboard/{self.pk}/"
@@ -65,8 +87,6 @@ class Rubric(models.Model):
 
 
 
-
-
 class Bb(models.Model):
     rubric = models.ForeignKey(
         'Rubric',
@@ -78,6 +98,9 @@ class Bb(models.Model):
     title = models.CharField(
         max_length=50,
         verbose_name="Товар",
+        validators=[validators.MinLengthValidator(get_min_length)],
+        #validators=[validators.RegexValidator(regex='^.{4,}$', inverse_match=True)]
+        error_messages={'min_length': 'Слишком много символов'}
     )
 
     content = models.TextField(
@@ -90,6 +113,7 @@ class Bb(models.Model):
         null=True,
         blank=True,
         verbose_name="Цена",
+        validators=[validate_even, MinMaxValueValidator(50, 60_000_000)]
     )
 
     published = models.DateTimeField(
@@ -107,36 +131,36 @@ class Bb(models.Model):
         ordering = ['-published', 'title']
         db_table = 'bboard_bb'
 
-    class Person(models.Model):
-        first_name = models.CharField(max_length=100)
-        last_name = models.CharField(max_length=100)
-        age = models.IntegerField()
-        email = models.EmailField()
-        phone_number = models.CharField(max_length=10)
-
-        def __str__(self):
-            return f"{self.first_name} {self.last_name}"
-
-
-    class Child(models.Model):
-        parent = models.ForeignKey("Person", on_delete=models.CASCADE)
-        first_name = models.CharField(max_length=100)
-        age = models.IntegerField()
-        favorite_ise_cream = models.ForeignKey("")
-
-        def __str__(self):
-            return f"{self.first_name}"
-
-    class IceCream(models.Model):
-        FLAVORS_CHOICES = (
-            ('V', 'Ваниль'),
-            ('C', 'Шоколад'),
-            ('S', 'Клубника'),
-            ('P', 'Пломбир'),
-        )
-
-        name = models.CharField(max_length=100)
-        flavor = models.CharField(max_length=1, choices=FLAVORS_CHOICES)
-        price = models.DecimalField(max_digits=1, decimal_places=2)
-
-
+# class Person(models.Model):
+#     first_name = models.CharField(max_length=100)
+#     last_name = models.CharField(max_length=100)
+#     age = models.IntegerField()
+#     email = models.EmailField()
+#     phone_number = models.CharField(max_length=10)
+#
+#     def __str__(self):
+#         return f"{self.first_name} {self.last_name}"
+#
+#
+# class Child(models.Model):
+#     parent = models.ForeignKey("Person", on_delete=models.CASCADE)
+#     first_name = models.CharField(max_length=100)
+#     age = models.IntegerField()
+#     favorite_ise_cream = models.ForeignKey("")
+#
+#     def __str__(self):
+#         return f"{self.first_name}"
+#
+# class IceCream(models.Model):
+#     FLAVORS_CHOICES = (
+#         ('V', 'Ваниль'),
+#         ('C', 'Шоколад'),
+#         ('S', 'Клубника'),
+#         ('P', 'Пломбир'),
+#     )
+#
+#     name = models.CharField(max_length=100)
+#     flavor = models.CharField(max_length=1, choices=FLAVORS_CHOICES)
+#     price = models.DecimalField(max_digits=1, decimal_places=2)
+#
+#
