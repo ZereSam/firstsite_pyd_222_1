@@ -98,3 +98,20 @@ class Bb(models.Model):
         first_name = models.CharField(max_length=100)
         age = models.IntegerField()
         favorite_ise_cream = models.ForeignKey("")
+
+        def __str__(self):
+            return f"{self.first_name}"
+
+    class IceCream(models.Model):
+        FLAVORS_CHOICES = (
+            ('V', 'Ваниль'),
+            ('C', 'Шоколад'),
+            ('S', 'Клубника'),
+            ('P', 'Пломбир'),
+        )
+
+        name = models.CharField(max_length=100)
+        flavor = models.CharField(max_length=1, choices=FLAVORS_CHOICES)
+        price = models.DecimalField(max_digits=1, decimal_places=2)
+
+
