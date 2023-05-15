@@ -27,16 +27,36 @@ class Rubric(models.Model):
         max_length=20,
         db_index=True,
         verbose_name="Название",
-        help_text="Опубликовано"
     )
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        # Выполняем какие-то действия
+        if True:
+            super().save(*args, **kwargs)
+        # Выполняем какие-то действия после сохранения
+
+    def delete(self, *args, **kwargs):
+        # Выполняем какие-то действия
+        if True:
+            super().delete(*args, **kwargs)
+        # Выполняем какие-то действия после
+
+
+
+
     def get_absolute_url(self):
         #return "/bboard/%s/" % self.pk
         #return f"/bboard/{self.pk}/"
         return f"/{self.pk}/"
+
+    def title_and_price(self):
+        if self.price:
+            #return '%s (%.2f)' % (self.title, self.price)
+            return f'{self.title} ({self.price:.2f})'
+        return self.title
 
     class Meta:
         verbose_name = 'Рубрика'
