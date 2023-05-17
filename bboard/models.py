@@ -14,17 +14,17 @@ def validate_even(val):
         raise ValidationError('Число %(value)s нечетное', code='odd', params={'value': val})
 
 
-class MinMaxValueValidator:
-    def __init__(self, min_value, max_value):
-        self.min_value = min_value
-        self.max_value = max_value
-
-    def __call__(self, val):
-        if val < self.min_value or val > self.max_value:
-            raise ValidationError('Введенное число должно быть > %(min)s' 'и < %(max)s',
-                                  code='out_of_range',
-                                  params={'min': self.min_value,
-                                          'max': self.max_value})
+# class MinMaxValueValidator:
+#     def __init__(self, min_value, max_value):
+#         self.min_value = min_value
+#         self.max_value = max_value
+#
+#     def __call__(self, val):
+#         if val < self.min_value or val > self.max_value:
+#             raise ValidationError('Введенное число должно быть > %(min)s' 'и < %(max)s',
+#                                   code='out_of_range',
+#                                   params={'min': self.min_value,
+#                                           'max': self.max_value})
 
 
 class AdvUser(models.Model):
@@ -100,7 +100,7 @@ class Bb(models.Model):
         verbose_name="Товар",
         validators=[validators.MinLengthValidator(get_min_length)],
         #validators=[validators.RegexValidator(regex='^.{4,}$', inverse_match=True)]
-        error_messages={'min_length': 'Слишком много символов'}
+        error_messages={'min_length': 'Слишком много символов'},
     )
 
     content = models.TextField(
@@ -113,7 +113,8 @@ class Bb(models.Model):
         null=True,
         blank=True,
         verbose_name="Цена",
-        validators=[validate_even, MinMaxValueValidator(50, 60_000_000)]
+        validators=[validate_even, #MinMaxValueValidator(50, 60_000_000)
+         ]
     )
 
     published = models.DateTimeField(
