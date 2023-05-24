@@ -27,15 +27,6 @@ def validate_even(val):
 #                                           'max': self.max_value})
 
 
-class AdvUser(models.Model):
-    is_activated = models.BooleanField(
-        default=True,
-    )
-
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-    )
 
 
 # class Spare(models.Model):
@@ -127,6 +118,7 @@ class Bb(models.Model):
         return f'Объявление: {self.title}'
 
     class Meta:
+        # order_with_respect_to = 'rubric'
         verbose_name = "Объявление"
         verbose_name_plural = "Объявления"
         ordering = ['-published', 'title']
