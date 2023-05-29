@@ -79,6 +79,13 @@ class Rubric(models.Model):
 
 
 class Bb(models.Model):
+    KINDS = {
+        ('b', 'Куплю'),
+        ('s', 'Продам'),
+        ('c', 'Поменяю'),
+    }
+
+
     rubric = models.ForeignKey(
         'Rubric',
         null=True,
@@ -92,6 +99,12 @@ class Bb(models.Model):
         validators=[validators.MinLengthValidator(get_min_length)],
         #validators=[validators.RegexValidator(regex='^.{4,}$', inverse_match=True)]
         error_messages={'min_length': 'Слишком много символов'},
+    )
+
+    kind = models.CharField(
+        max_length=1,
+        choices=KINDS,
+        default='s'
     )
 
     content = models.TextField(
@@ -118,10 +131,10 @@ class Bb(models.Model):
         return f'Объявление: {self.title}'
 
     class Meta:
-        # order_with_respect_to = 'rubric'
+        order_with_respect_to = 'rubric'
         verbose_name = "Объявление"
         verbose_name_plural = "Объявления"
-        ordering = ['-published', 'title']
+        # ordering = ['-published', 'title']
         db_table = 'bboard_bb'
 
 # class Person(models.Model):
