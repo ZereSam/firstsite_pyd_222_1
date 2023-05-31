@@ -1,6 +1,9 @@
 {% extends "layout/basic.html" %}
 
 {% block content %}
+
+    <h3>Минимальная цена: {{ min_price }} руб.<br>Максимальная цена: {{ max_price }} руб.<br>Разница цен: {{diff_price}} руб</h3>
+
     {% for bb in bbs %}
         <div>
             #<h2>{{ bb.title }}</h2>
@@ -11,4 +14,7 @@
             <p>{{ bb.published|date:"d.m.Y H:i:s" }}</p>
         </div>
     {% endfor %}
+
+
+
 {% endblock %}
