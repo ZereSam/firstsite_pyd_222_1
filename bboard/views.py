@@ -71,16 +71,21 @@ def index(request):
     return render(request, 'bboard/index.html', context)
 
 
-def by_rubric(request, rubric_id):
+def by_rubric(request, rubric_id, **kwargs):
     bbs = Bb.objects.filter(rubric=rubric_id)
     rubrics = Rubric.objects.all()
     current_rubric = Rubric.objects.get(pk=rubric_id)
 
+    print(kwargs.get('name'), kwargs.get('beaver'))
 
     context = {
         'bbs': bbs,
         'rubrics': rubrics,
         'current_rubric': current_rubric,
         'count_bb': count_bb(),
+        # 'name': kwargs.get('name'),
+        'kwargs': kwargs,
+
     }
+    print()
     return render(request, 'bboard/by_rubric.html', context)
