@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='bb',
             name='title',
-            field=models.CharField(error_messages={'min_length': 'Слишком много символов'}, max_length=50, validators=[django.core.validators.MinLengthValidator(bboard.models.get_min_length)], verbose_name='Товар'),
+            field=models.CharField(error_messages={'min_length': 'Слишком много символов'}, max_length=50, validators=[django.core.validators.MinLengthValidator(
+                bboard.models.get_min_length)], verbose_name='Товар'),
         ),
     ]
