@@ -77,14 +77,12 @@ class Rubric(models.Model):
         ordering = ['name']
 
 
-
 class Bb(models.Model):
     KINDS = {
         ('b', 'Куплю'),
         ('s', 'Продам'),
         ('c', 'Поменяю'),
     }
-
 
     rubric = models.ForeignKey(
         'Rubric',
