@@ -1,6 +1,7 @@
 from django.db.models import Min, Max, Count, Q, Sum, IntegerField, Avg
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound,Http404
-from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, Http404, StreamingHttpResponse, FileResponse, \
+    JsonResponse
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.template.loader import get_template, render_to_string
 from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import CreateView
@@ -50,6 +51,14 @@ def index(request):
     template = get_template('bboard/index.html')
     # return HttpResponse(template.render(context, request))
     return HttpResponse(render_to_string('bboard/index.html', context, request))
+    #data = {'title': 'Мотоцикл', 'content': 'Старый', 'price': 10000.0}
+    #return JsonResponse(data)
+
+#def index(request):
+#    resp_content = ('Здесь будет', ' главная', ' страница', ' сайта')
+ #   resp = StreamingHttpResponse(resp_content,
+ #                                content_type='text/plain; charset=utf-8')
+ #   return resp
 
 
 def practice(request):
@@ -172,3 +181,10 @@ def add_and_save(request):
 #         # return HttpResponseNotFound('Такого объявления не существует')
 #         return Http404('Такого объявления не существует')
 #     return HttpResponse(...)
+
+
+def detail(request, rec_id):
+    bb = get_object_or_404(Bb, pk=rec_id)
+    bbs = get_list_or_404(Bb, pk=bb.rubric.pk)
+    context = {'bb': bb, 'bbs': bbs}
+    return HttpResponse(render_to_string('bboard/detail.html', context, request))
