@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.template.loader import get_template, render_to_string
 from django.urls import reverse_lazy, reverse
+from django.views.generic import ListView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
 
@@ -25,7 +26,7 @@ def print_request_fields(request):
 
 
 class BbCreateView(CreateView):
-    template_name = 'bboard/create.html'
+    template_name = 'bboard/add_form.html'
     form_class = BbForm
     success_url = reverse_lazy('index')
 
@@ -43,6 +44,26 @@ def index_resp(request):
     resp.writelines((' страница', ' сайта'))
     resp['keywords'] = 'Python, Django'
     return resp
+
+
+class IndexListView(ListView):
+    template_name = 'bboard/index.html'
+    model = Bbcontext_object_name = 'bbs'
+
+    def context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rubrics'] = Rubric.objects.all()
+        context['min_price'], context['max_price'], context['diff_price'] = self.get_price_aggregates()
+        context['count_bb'] = BbCreateView().count_bb()
+        return context
+
+    def get_price_aggregates(self):
+        result = Bb.objects.aggregate(
+            min_price=Min('price'),
+            max_price=Max('price'),
+            diff_price=Max('price') - Min('price')
+        )
+        return result.get('min_price'), result.get('max_price'), result.get('diff_price')
 
 
 def index(request):
@@ -154,7 +175,7 @@ class BbByRubricView(TemplateView):
 def add(request):
     bbf = BbForm()
     context = {'form': bbf}
-    return render(request, 'bboard/create.html', context)
+    return render(request, 'bboard/add_form.html', context)
 
 
 def add_save(request):
@@ -166,7 +187,7 @@ def add_save(request):
         return HttpResponseRedirect(reverse('by_rubric', kwargs={'rubric_id': bbf.cleaned_data['rubric'].pk}))
     else:
         context = {'form': bbf}
-        return render(request, 'bboard/create.html', context)
+        return render(request, 'bboard/add_form.html', context)
 
 
 def add_and_save(request):
@@ -179,11 +200,11 @@ def add_and_save(request):
             return HttpResponseRedirect(reverse('by_rubric', kwargs={'rubric_id': bbf.cleaned_data['rubric'].pk}))
         else:
             context = {'form': bbf}
-            return render(request, 'bboard/create.html', context)
+            return render(request, 'bboard/add_form.html', context)
     else:
         bbf = BbForm()
         context = {'form': bbf}
-        return render(request, 'bboard/create.html', context)
+        return render(request, 'bboard/add_form.html', context)
 
 
 # def detail(request, bb_id):
