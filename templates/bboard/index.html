@@ -18,7 +18,6 @@
 
     {% for bb in bbs %}
         <div>
-
 <!--            <h2>{{ bb.title }}</h2>-->
             <h2>
                 <a href="{% url 'read' bb.pk %}">
@@ -31,7 +30,5 @@
             <p>{{ bb.published|date:"d.m.Y H:i:s" }}</p>
         </div>
     {% endfor %}
-
-
 
 {% endblock %}
