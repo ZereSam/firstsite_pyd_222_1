@@ -4,9 +4,10 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.template.loader import get_template, render_to_string
 from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView
+from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView
+from django.views.generic.list import ListView
 
 from bboard.forms import BbForm
 from bboard.models import Bb, Rubric
@@ -161,15 +162,15 @@ def by_rubric(request, rubric_id, **kwargs):
 #     return HttpResponse(...)
 
 
-class BbByRubricView(TemplateView):
-    template_name = 'bboard/by_rubric.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['current_rubric'] = Rubric.objects.get(pk=context['rubric_id'])
-        context['bbs'] = Bb.objects.filter(rubric=context['rubric_id'])
-        context['rubrics'] = Rubric.objects.all()
-        return context
+# class BbByRubricView(TemplateView):
+#     template_name = 'bboard/by_rubric.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['current_rubric'] = Rubric.objects.get(pk=context['rubric_id'])
+#         context['bbs'] = Bb.objects.filter(rubric=context['rubric_id'])
+#         context['rubrics'] = Rubric.objects.all()
+#         return context
 
 
 def add(request):
@@ -221,3 +222,53 @@ def detail(request, rec_id):
     bbs = get_list_or_404(Bb, pk=bb.rubric.pk)
     context = {'bb': bb, 'bbs': bbs}
     return HttpResponse(render_to_string('bboard/detail.html', context, request))
+
+
+class BbDetailView(DetailView):
+    model = Bb
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rubrics'] = Rubric.objects.all()
+        return context
+
+
+class BbByRubricView(ListView):
+    template_name = 'bboard/by_rubric.html'
+    context_object_name = 'bbs'
+
+    def get_queryset(self):
+        return Bb.objects.filter(rubric=self.kwargs['rubric_id'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rubrics'] = Rubric.objects.all()
+        context['current_rubric'] = Rubric.objects.get(pk=self.kwargs['rubric_id'])
+        return context
+
+
+class BbAddView(FormView):
+    template_name = 'bboard/create.html'
+    form_class = BbForm
+    initial = {'price': 0.0}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rubrics'] = Rubric.objects.all()
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def get_form(self, form_class=None):
+        self.object = super().get_form(form_class)
+        return self.object
+
+    def get_success_url(self):
+        return reverse('bboard:by_rubric',
+                       kwargs={'rubric_id': self.object.cleaned_data['rubric'].pk})
+
+
+
+
