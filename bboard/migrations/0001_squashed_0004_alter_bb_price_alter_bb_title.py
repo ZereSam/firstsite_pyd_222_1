@@ -9,7 +9,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('bboard', '0001_initial'), ('bboard', '0002_rubric_alter_bb_options_alter_bb_content_and_more'), ('bboard', '0003_spare_alter_bb_options_alter_bb_table_machine_and_more'), ('bboard', '0004_alter_bb_price_alter_bb_title')]
+    replaces = [('bboard', '0001_initial'), ('bboard', '0002_rubric_alter_bb_options_alter_bb_content_and_more'), ('bboard', '0003_spare_alter_bb_options_machine_advuser'), ('bboard', '0004_alter_bb_price_alter_bb_title')]
 
     initial = True
 
@@ -38,26 +38,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Bb',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=50, verbose_name='Товар')),
-                ('content', models.TextField(blank=True, null=True, verbose_name='Описание')),
-                ('price', models.FloatField(blank=True, null=True, verbose_name='Цена')),
-                ('published', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Опубликовано')),
-                ('rubric', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='bboard.rubric', verbose_name='Рубрика')),
-            ],
-            options={
-                'ordering': ['-published', 'title'],
-                'verbose_name': 'Объявление',
-                'verbose_name_plural': 'Объявления',
-            },
-        ),
-        migrations.AlterModelTable(
-            name='bb',
-            table='bboard_bb',
-        ),
-        migrations.CreateModel(
             name='Machine',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -73,15 +53,20 @@ class Migration(migrations.Migration):
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
-        migrations.AlterField(
-            model_name='bb',
-            name='price',
-            field=models.FloatField(blank=True, null=True, validators=[bboard.models.validate_even], verbose_name='Цена'),
-        ),
-        migrations.AlterField(
-            model_name='bb',
-            name='title',
-            field=models.CharField(error_messages={'min_length': 'Слишком много символов'}, max_length=50, validators=[django.core.validators.MinLengthValidator(
-                bboard.models.get_min_length)], verbose_name='Товар'),
+        migrations.CreateModel(
+            name='Bb',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('title', models.CharField(error_messages={'min_length': 'Слишком мало символов'}, max_length=50, validators=[django.core.validators.MinLengthValidator(bboard.models.get_min_length)], verbose_name='Товар')),
+                ('content', models.TextField(blank=True, null=True, verbose_name='Описание')),
+                ('price', models.FloatField(blank=True, null=True, validators=[bboard.models.validate_even], verbose_name='Цена')),
+                ('published', models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Опубликовано')),
+                ('rubric', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='bboard.rubric', verbose_name='Рубрика')),
+            ],
+            options={
+                'ordering': ['-published', 'title'],
+                'verbose_name': 'Объявление',
+                'verbose_name_plural': 'Объявления',
+            },
         ),
     ]

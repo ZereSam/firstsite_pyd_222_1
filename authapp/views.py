@@ -1,7 +1,8 @@
-from django.urls import reverse
 from django.contrib import auth
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
+
 from authapp.forms import UserLoginForm
 
 
@@ -23,6 +24,7 @@ def login(request):
         'title': title,
         'login_form': login_form,
     }
+
     return render(request, 'authapp/login.html', context)
 
 

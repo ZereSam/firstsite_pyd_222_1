@@ -55,19 +55,17 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'firstsite.urls'
 
-#ABSOLUTE_URL_OVERRIDES = {
-    #'bboard.rubric': lambda rec: "/bboard/%s/" %rec.pk,
-    #'bboard.rubric': lambda rec: "/bboard/{rec.pk}/",
-#    'bboard.rubric': lambda rec: f"/{rec.pk}/",
-#}
+# ABSOLUTE_URL_OVERRIDES = {
+#     # 'bboard.rubric': lambda rec: "/bboard/%s/" % rec.pk,
+#     # 'bboard.rubric': lambda rec: f"/bboard/{rec.pk}/",
+#     'bboard.rubric': lambda rec: f"/{rec.pk}/",
+# }
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': [BASE_DIR/'templates'],
-        'APP_DIRS': False,
-
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -112,6 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 DEFAULT_CHARSET = 'utf-8'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

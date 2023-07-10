@@ -11,7 +11,8 @@ def get_min_length():
 
 def validate_even(val):
     if val % 2 != 0:
-        raise ValidationError('Число %(value)s нечетное', code='odd', params={'value': val})
+        raise ValidationError('Число %(value)s нечётное', code='odd',
+                              params={'value': val})
 
 
 # class MinMaxValueValidator:
@@ -21,12 +22,22 @@ def validate_even(val):
 #
 #     def __call__(self, val):
 #         if val < self.min_value or val > self.max_value:
-#             raise ValidationError('Введенное число должно быть > %(min)s' 'и < %(max)s',
+#             raise ValidationError('Введённое число должно быть > %(min)s '
+#                                   'и < %(max)s',
 #                                   code='out_of_range',
 #                                   params={'min': self.min_value,
 #                                           'max': self.max_value})
 
 
+# class AdvUser(models.Model):
+#     is_activated = models.BooleanField(
+#         default=True,
+#     )
+#
+#     user = models.OneToOneField(
+#         User,
+#         on_delete=models.CASCADE
+#     )
 
 
 # class Spare(models.Model):
@@ -48,42 +59,35 @@ class Rubric(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        # Выполняем какие-то действия
-        if True:
-            super().save(*args, **kwargs)
-        # Выполняем какие-то действия после сохранения
-
-    def delete(self, *args, **kwargs):
-        # Выполняем какие-то действия
-        if True:
-            super().delete(*args, **kwargs)
-        # Выполняем какие-то действия после
+    # def save(self, *args, **kwargs):
+    #     # Выполняем какие-то действия до сохранения
+    #     if True:
+    #         super().save(*args, **kwargs)
+    #     # Выполняем какие-то действия после сохранения
+    #
+    # def delete(self, *args, **kwargs):
+    #     # Выполняем какие-то действия до удаления
+    #     if True:
+    #         super().delete(*args, **kwargs)
+    #     # Выполняем какие-то действия после удаления
 
     def get_absolute_url(self):
-        #return "/bboard/%s/" % self.pk
-        #return f"/bboard/{self.pk}/"
+        # return "/bboard/%s/" % self.pk
+        # return f"/bboard/{self.pk}/"
         return f"/{self.pk}/"
-
-    def title_and_price(self):
-        if self.price:
-            #return '%s (%.2f)' % (self.title, self.price)
-            return f'{self.title} ({self.price:.2f})'
-        return self.title
 
     class Meta:
         verbose_name = 'Рубрика'
         verbose_name_plural = 'Рубрики'
         ordering = ['name']
-        #ordering = ['-published', 'title']
 
 
 class Bb(models.Model):
-    KINDS = {
+    KINDS = (
         ('b', 'Куплю'),
         ('s', 'Продам'),
-        ('c', 'Поменяю'),
-    }
+        ('c', 'Поменяю')
+    )
 
     rubric = models.ForeignKey(
         'Rubric',
@@ -96,8 +100,10 @@ class Bb(models.Model):
         max_length=50,
         verbose_name="Товар",
         validators=[validators.MinLengthValidator(get_min_length)],
-        #validators=[validators.RegexValidator(regex='^.{4,}$', inverse_match=True)]
-        error_messages={'min_length': 'Слишком много символов'},
+        # validators=[validators.RegexValidator(regex='^.{4,}$',
+        # inverse_match=True)]
+        # validators=[validators.ProhibitNullCharactersValidator()]  # \x00
+        error_messages={'min_length': 'Слишком мало символов'},
     )
 
     kind = models.CharField(
@@ -116,8 +122,7 @@ class Bb(models.Model):
         null=True,
         blank=True,
         verbose_name="Цена",
-        validators=[validate_even, #MinMaxValueValidator(50, 60_000_000)
-         ]
+        validators=[validate_even]  # , MinMaxValueValidator(50, 60_000_000)]
     )
 
     published = models.DateTimeField(
@@ -129,43 +134,14 @@ class Bb(models.Model):
     def __str__(self):
         return f'Объявление: {self.title}'
 
+    def title_and_price(self):
+        if self.price:
+            # return '%s (%.2f)' % (self.title, self.price)
+            return f'{self.title} ({self.price:.2f})'
+        return self.title
+
     class Meta:
-        #order_with_respect_to = 'rubric'
+        # order_with_respect_to = 'rubric'
         verbose_name = "Объявление"
         verbose_name_plural = "Объявления"
         ordering = ['-published', 'title']
-        #db_table = 'bboard_bb'
-
-# class Person(models.Model):
-#     first_name = models.CharField(max_length=100)
-#     last_name = models.CharField(max_length=100)
-#     age = models.IntegerField()
-#     email = models.EmailField()
-#     phone_number = models.CharField(max_length=10)
-#
-#     def __str__(self):
-#         return f"{self.first_name} {self.last_name}"
-#
-#
-# class Child(models.Model):
-#     parent = models.ForeignKey("Person", on_delete=models.CASCADE)
-#     first_name = models.CharField(max_length=100)
-#     age = models.IntegerField()
-#     favorite_ise_cream = models.ForeignKey("")
-#
-#     def __str__(self):
-#         return f"{self.first_name}"
-#
-# class IceCream(models.Model):
-#     FLAVORS_CHOICES = (
-#         ('V', 'Ваниль'),
-#         ('C', 'Шоколад'),
-#         ('S', 'Клубника'),
-#         ('P', 'Пломбир'),
-#     )
-#
-#     name = models.CharField(max_length=100)
-#     flavor = models.CharField(max_length=1, choices=FLAVORS_CHOICES)
-#     price = models.DecimalField(max_digits=1, decimal_places=2)
-#
-#

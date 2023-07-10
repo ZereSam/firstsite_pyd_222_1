@@ -2,28 +2,23 @@
 
 {% block content %}
 
-<!--    <h1>{{ test_var }}</h1>-->
-
     {% if user.is_authenticated %}
-        <h3>
-            <a href="{% url 'authapp:logout' %}">
+    <h3>
+        <a href="{% url 'authapp:logout' %}">
             Выйти ({{ user.username }})
-            </a>
-        </h3>
+        </a>
+    </h3>
     {% else %}
-         <h3>
+        <h3>
             <a href="{% url 'authapp:login' %}">
                 Войти
             </a>
         </h3>
     {% endif %}
 
-    <p>Первое объявление: {{ bbs.0.title }}</p>
-
     {% for bb in bbs %}
-
         <div>
-<!--            <h2>{{ bb.title }}</h2>-->
+{#            <h2>{{ bb.title }}</h2>#}
             <h2>
                 {#<a href="{% url 'read' bb.pk %}">#}
                 <a href="{% url 'detail' pk=bb.pk %}">
@@ -31,17 +26,22 @@
                 </a>
             </h2>
             <p>{{ bb.content }}</p>
-            <p><a href="{{ bb.rubric.get_absolute_url}}">
+            <p><a href="{{ bb.rubric.get_absolute_url }}">
                 {{ bb.rubric.name }}</a></p>
             <p>{{ bb.published|date:"d.m.Y H:i:s" }}</p>
         </div>
     {% endfor %}
 
+{#    <p>#}
+{#    {% for d in date_list %}#}
+{#        {{ d.year }}#}
+{#    {% endfor %}#}
+{#    </p>#}
+{#    <p>#}
+{#    {% for obj in object_list %}#}
+{#        {{ obj }}#}
+{#    {% endfor %}#}
+{#    </p>#}
 
-<!--    <p>-->
-<!--     {% for d in date_list%}-->
-<!--        {{ d.year }}-->
-<!--     {% endfor %}-->
-<!--    </p>-->
 
 {% endblock %}

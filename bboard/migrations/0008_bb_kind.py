@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='bb',
             name='kind',
-            field=models.CharField(choices=[('b', 'Куплю'), ('c', 'Поменяю'), ('s', 'Продам')], default='s', max_length=1),
+            field=models.CharField(choices=[('b', 'Куплю'), ('s', 'Продам'), ('c', 'Поменяю')], default='s', max_length=1),
         ),
     ]
