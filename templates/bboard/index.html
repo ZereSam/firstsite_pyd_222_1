@@ -2,6 +2,30 @@
 
 {% block content %}
 
+<pre>
+    {{ True|yesno|ljust:20 }},
+    {{ False|yesno|center:20 }},
+    {{ None|yesno|rjust:20 }}
+</pre>
+
+    {{ 123456789|get_digit:2 }}
+
+    {% filter linebreaksbr %}
+    {{ True|yesno }},
+    {{ False|yesno }},
+    {{ None|yesno }}
+
+    {{ True|yesno:'так точно, никак нет, дело темное'}}
+    {% endfilter %}
+
+    <ul>{{ 'Python'|cut:'t'|make_list|unordered_list }}</ul>
+
+    <ul>
+        {{ ulist|unordered_list }}
+    </ul>
+
+
+{% filter upper %}
     {% if user.is_authenticated %}
     <h3>
         <a href="{% url 'authapp:logout' %}">
@@ -15,20 +39,43 @@
             </a>
         </h3>
     {% endif %}
+{% endfilter %}
+    <p>Первое объявление:{{ bbs.0.title }}</p>
 
-    {% for bb in bbs %}
-        <div>
-{#            <h2>{{ bb.title }}</h2>#}
-            <h2>
+    {% with bb_count=bbs.count %}
+        {% if bb_count %}
+            <p>Всего {{ bb_count }}объявлений</p>
+        {% endif %}
+    {% endwith %}
+
+
+    {% for bb in bbs|dictsortreversed:'price' %}
+        {% cycle 'b1' 'b2' 'b3' as currentclass %}
+        <div class="{% cycle 'bg-secondary' 'bg-light' %}">
+<!--{#            <h2>{{ bb.title }}</h2>#}-->
+            <h2 class="{{ currentclass }}">
+
                 {#<a href="{% url 'read' bb.pk %}">#}
                 <a href="{% url 'detail' pk=bb.pk %}">
-                    {{ bb.title_and_price }}
+                    {% if forloop.first %}
+                        !
+                    {% elif forloop.last %}
+                        !!!
+                    {% else %}
+                        !!
+                    {% endif %}
+
+                    {{ forloop.counter }}. {{ bb.title_and_price }}
+
                 </a>
             </h2>
-            <p>{{ bb.content }}</p>
+            <p>{{ bb.content|truncatewords:2 }}</p>
             <p><a href="{{ bb.rubric.get_absolute_url }}">
-                {{ bb.rubric.name }}</a></p>
+                {{ bb.rubric.name|upper }}</a></p>
+            <p>{{ bb.price|default:"Цены нет"|floatformat:5}}</p>
             <p>{{ bb.published|date:"d.m.Y H:i:s" }}</p>
+            <p>{{ bb.published|date:"DATE_FORMAT" }}</p>
+            <p>{% firstof bb.phone bb.email 'На деревню дедушке' %}</p>
         </div>
     {% endfor %}
 
@@ -42,6 +89,5 @@
 {#        {{ obj }}#}
 {#    {% endfor %}#}
 {#    </p>#}
-
 
 {% endblock %}
